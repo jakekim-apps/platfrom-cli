@@ -7,45 +7,91 @@ import {
     Th,
     Td,
     TableCaption,
-    TableContainer,
+    TableContainer, Checkbox,
 } from '@chakra-ui/react';
+import {useState} from "react";
 
-export const CommonTable = () => {
+const HeaderMap = {
+    card: {
+        title: "Card List",
+        headers: [
+            {
+                key: '_id',
+                text: 'ID'
+            },
+            {
+                key: 'cardNumber',
+                text: 'Card Number'
+            },
+            {
+                key: 'name',
+                text: 'Name'
+            },
+            {
+                key: 'description',
+                text: 'Description'
+            }
+        ]
+    },
+    account: {
+        title: "Account List",
+        headers: [
+            {
+                key: '_id',
+                text: 'ID'
+            },
+            {
+                key: 'accountNumber',
+                text: 'Account Number'
+            },
+            {
+                key: 'name',
+                text: 'Name'
+            },
+            {
+                key: 'description',
+                text: 'Description'
+            },
+            {
+                key: 'amount',
+                text: 'Amount'
+            }
+        ]
+    }
+}
+
+export const CommonTable = (props) => {
+
+    const title = HeaderMap[props.type]?.title || '';
+    const headers = HeaderMap[props.type]?.headers || [];
+    const data = props.data || [];
+    const handleClickRow = props?.onClickRow || null;
+
     return (
         <TableContainer>
             <Table variant='striped' colorScheme='teal'>
-                <TableCaption>Imperial to metric conversion factors</TableCaption>
+                <TableCaption> {title} </TableCaption>
                 <Thead>
                     <Tr>
-                        <Th>To convert</Th>
-                        <Th>into</Th>
-                        <Th isNumeric>multiply by</Th>
+                        {
+                            headers.map((h, i) => <Th key={'header_' + i}> {h.text} </Th>)
+                        }
                     </Tr>
                 </Thead>
                 <Tbody>
-                    <Tr>
-                        <Td>inches</Td>
-                        <Td>millimetres (mm)</Td>
-                        <Td isNumeric>25.4</Td>
-                    </Tr>
-                    <Tr>
-                        <Td>feet</Td>
-                        <Td>centimetres (cm)</Td>
-                        <Td isNumeric>30.48</Td>
-                    </Tr>
-                    <Tr>
-                        <Td>yards</Td>
-                        <Td>metres (m)</Td>
-                        <Td isNumeric>0.91444</Td>
-                    </Tr>
+
+                    {
+                        data.map((d) => {
+                            return (
+                                <Tr onClick={handleClickRow ? handleClickRow(d) : () => {}}>
+                                    {
+                                        headers.map((h, i) => <Td key={'body_'+i}> {d[h.key]} </Td>)
+                                    }
+                                </Tr>
+                            )
+                        })
+                    }
                 </Tbody>
-                <Tfoot>
-                    <Tr>
-                        <Th>To convert</Th>
-                        <Th>into</Th>
-                        <Th isNumeric>multiply by</Th>
-                    </Tr>
-                </Tfoot>
             </Table>
         </TableContainer>
     )
