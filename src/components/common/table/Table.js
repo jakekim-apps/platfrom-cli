@@ -10,22 +10,19 @@ import {
     TableContainer, Checkbox,
 } from '@chakra-ui/react';
 import {useState} from "react";
+import React from "react";
 
 const HeaderMap = {
     card: {
         title: "Card List",
         headers: [
             {
-                key: '_id',
-                text: 'ID'
+                key: 'name',
+                text: 'Name'
             },
             {
                 key: 'cardNumber',
                 text: 'Card Number'
-            },
-            {
-                key: 'name',
-                text: 'Name'
             },
             {
                 key: 'description',
@@ -37,16 +34,12 @@ const HeaderMap = {
         title: "Account List",
         headers: [
             {
-                key: '_id',
-                text: 'ID'
+                key: 'name',
+                text: 'Name'
             },
             {
                 key: 'accountNumber',
                 text: 'Account Number'
-            },
-            {
-                key: 'name',
-                text: 'Name'
             },
             {
                 key: 'description',
@@ -58,7 +51,7 @@ const HeaderMap = {
             }
         ]
     }
-}
+};
 
 export const CommonTable = (props) => {
 
@@ -81,9 +74,9 @@ export const CommonTable = (props) => {
                 <Tbody>
 
                     {
-                        data.map((d) => {
+                        data.map((d, i) => {
                             return (
-                                <Tr onClick={handleClickRow ? handleClickRow(d) : () => {}}>
+                                <Tr key={i} onClick={handleClickRow ? (e) => handleClickRow(d) : () => {}}>
                                     {
                                         headers.map((h, i) => <Td key={'body_'+i}> {d[h.key]} </Td>)
                                     }

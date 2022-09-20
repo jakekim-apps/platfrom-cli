@@ -21,9 +21,9 @@ function Card() {
         name: '',
         cardNumber: '',
         description: ''
-    })
+    });
 
-    const [selectedCard, setSelectedCard] = useState({});
+    const [selectedCard, setSelectedCard] = useState(null);
 
 
     const getCards = async () => {
@@ -33,19 +33,37 @@ function Card() {
         } catch (e) {
             console.log(e);
         }
-
-    }
+    };
 
     const createCard = async (data) => {
         try {
             const card = await cardService.registerCard(data);
-
         } catch (e) {
-            console.log(e)
+            console.log(e);
         } finally {
             getCards();
         }
-    }
+    };
+
+    const updateCard = async (data) => {
+        try {
+            const card = await cardService.updateCard(data);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            getCards();
+        }
+    };
+
+    const removeCard = async (data) => {
+        try {
+            const card = await cardService.removeCard(data);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            getCards();
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -53,42 +71,60 @@ function Card() {
             ...inputs,
             [name]: value
         })
-    }
+    };
 
     const openModal = () => {
         setModal(true);
-    }
+    };
 
     const closeModal = () => {
         setModal(false);
+        setSelectedCard(null);
         setInputs({
             name: '',
             cardNumber: '',
             description: ''
         })
-    }
+    };
 
     const handleCreateCard = () => {
         const data = {
             ...inputs
-        }
+        };
         createCard(data);
         closeModal()
-    }
+    };
+
+    const handleUpdateCard = () => {
+        const data = {
+            ...inputs,
+            id: selectedCard._id
+        };
+        updateCard(data);
+        closeModal();
+    };
+
+    const handleRemoveCard = () => {
+        const data = {
+            id: selectedCard._id
+        };
+        removeCard(data);
+        closeModal();
+    };
 
     const handleClickRow = (row) => {
-        console.log(row)
         setSelectedCard(row);
         setInputs({
             name: row.name,
             cardNumber: row.cardNumber,
             description: row.description
         });
-    }
+        openModal();
+    };
 
     useEffect(() => {
       getCards();
-    }, [])
+    }, []);
 
     return (
         <div>
@@ -107,7 +143,7 @@ function Card() {
                 <CommonTable
                     type={'card'}
                     data={cards}
-                    // onClickRow={handleClickRow}
+                    onClickRow={handleClickRow}
                 />
             </div>
 
@@ -123,16 +159,16 @@ function Card() {
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Text mb='8px'>Name: {inputs.name}</Text>
+                        <Text mb='8px'>Name</Text>
                         <Input
-                            value={inputs.value}
+                            value={inputs.name}
                             name={'name'}
                             onChange={handleChange}
                             placeholder='Name'
                             size='md'
                         />
 
-                        <Text mb='8px'>Card Number: {inputs.cardNumber}</Text>
+                        <Text mb='8px'>Card Number</Text>
                         <Input
                             value={inputs.cardNumber}
                             name={'cardNumber'}
@@ -141,7 +177,7 @@ function Card() {
                             size='md'
                         />
 
-                        <Text mb='8px'>Description: {inputs.description}</Text>
+                        <Text mb='8px'>Description</Text>
                         <Input
                             value={inputs.description}
                             name={'description'}
@@ -152,10 +188,16 @@ function Card() {
 
                     </ModalBody>
                     <ModalFooter>
+                        {
+                            selectedCard &&
+                            <Button onClick={handleRemoveCard}>
+                                Remove
+                            </Button>
+                        }
                         <Button onClick={closeModal}>
                             Close
                         </Button>
-                        <Button onClick={handleCreateCard}>
+                        <Button onClick={selectedCard ? handleUpdateCard : handleCreateCard}>
                             Apply
                         </Button>
                     </ModalFooter>

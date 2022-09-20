@@ -25,7 +25,7 @@ function Account() {
         amount: 0
     })
 
-    const [selectedAccount, setSelectedAccount] = useState({});
+    const [selectedAccount, setSelectedAccount] = useState(null);
 
 
     const getAccounts = async () => {
@@ -41,13 +41,32 @@ function Account() {
     const createAccount = async (data) => {
         try {
             const account = await accountService.registerAccount(data);
-
         } catch (e) {
-            console.log(e)
+            console.log(e);
         } finally {
             getAccounts();
         }
-    }
+    };
+
+    const updateAccount = async (data) => {
+        try {
+            const account = await accountService.updateAccount(data);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            getAccounts();
+        }
+    };
+
+    const removeAccount = async (data) => {
+        try {
+            const account = await accountService.removeAccount(data);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            getAccounts();
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,6 +82,7 @@ function Account() {
 
     const closeModal = () => {
         setModal(false);
+        setSelectedAccount(null);
         setInputs({
             name: '',
             accountNumber: '',
@@ -74,21 +94,38 @@ function Account() {
     const handleCreateAccount = () => {
         const data = {
             ...inputs
-        }
+        };
         createAccount(data);
-        closeModal()
-    }
+        closeModal();
+    };
+
+    const handleUpdateAccount = () => {
+        const data = {
+            ...inputs,
+            id: selectedAccount._id
+        };
+        updateAccount(data);
+        closeModal();
+    };
+
+    const handleRemoveAccount = () => {
+        const data = {
+            id: selectedAccount._id
+        };
+        removeAccount(data);
+        closeModal();
+    };
 
     const handleClickRow = (row) => {
-        console.log(row)
         setSelectedAccount(row);
         setInputs({
             name: row.name,
             accountNumber: row.accountNumber,
             description: row.description,
-            amount: 0
+            amount: row.amount
         });
-    }
+        openModal();
+    };
 
     useEffect(() => {
         getAccounts();
@@ -111,7 +148,7 @@ function Account() {
                 <CommonTable
                     type={'account'}
                     data={accounts}
-                    // onClickRow={handleClickRow}
+                    onClickRow={handleClickRow}
                 />
             </div>
 
@@ -127,16 +164,16 @@ function Account() {
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Text mb='8px'>Name: {inputs.name}</Text>
+                        <Text mb='8px'>Name</Text>
                         <Input
-                            value={inputs.value}
+                            value={inputs.name}
                             name={'name'}
                             onChange={handleChange}
                             placeholder='Name'
                             size='md'
                         />
 
-                        <Text mb='8px'>Card Number: {inputs.accountNumber}</Text>
+                        <Text mb='8px'>Account Number</Text>
                         <Input
                             value={inputs.accountNumber}
                             name={'accountNumber'}
@@ -145,7 +182,7 @@ function Account() {
                             size='md'
                         />
 
-                        <Text mb='8px'>Description: {inputs.description}</Text>
+                        <Text mb='8px'>Description</Text>
                         <Input
                             value={inputs.description}
                             name={'description'}
@@ -154,7 +191,7 @@ function Account() {
                             size='md'
                         />
 
-                        <Text mb='8px'>Amount: {inputs.amount}</Text>
+                        <Text mb='8px'>Amount</Text>
                         <Input
                             value={inputs.amount}
                             name={'amount'}
@@ -165,10 +202,16 @@ function Account() {
 
                     </ModalBody>
                     <ModalFooter>
+                        {
+                            selectedAccount &&
+                            <Button onClick={handleRemoveAccount}>
+                                Remove
+                            </Button>
+                        }
                         <Button onClick={closeModal}>
                             Close
                         </Button>
-                        <Button onClick={handleCreateAccount}>
+                        <Button onClick={selectedAccount ? handleUpdateAccount : handleCreateAccount}>
                             Apply
                         </Button>
                     </ModalFooter>

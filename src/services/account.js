@@ -34,13 +34,15 @@ function getAccounts(data) {
 }
 
 function updateAccount(data) {
-    let [method, url] = api.get;
-    let requestConfig = serviceConfig.makeRequestConfig(method, url);
+    let [method, url] = api.update;
+    url += data.id;
+    let requestConfig = serviceConfig.makeRequestConfig(method, url, data);
     return axios.request(requestConfig);
 }
 
 function removeAccount(data) {
-    let [method, url] = api.get;
+    let [method, url] = api.remove;
+    url += data.id;
     let requestConfig = serviceConfig.makeRequestConfig(method, url);
     return axios.request(requestConfig);
 }
