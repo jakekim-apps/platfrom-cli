@@ -50,15 +50,50 @@ const HeaderMap = {
                 text: 'Amount'
             }
         ]
+    },
+    category: {
+        title: 'Category List',
+        headers: [
+            {
+                key: 'name',
+                text: 'name'
+            },
+            {
+                key: 'description',
+                text: 'Description'
+            }
+        ]
+    },
+    subCategory: {
+        title: 'SubCategory List',
+        headers: [
+            {
+                key: 'name',
+                text: 'name'
+            },
+            {
+                key: 'description',
+                text: 'Description'
+            },
+            {
+                key: 'category.name',
+                text: 'Category Name'
+            }
+        ]
     }
-};
+}
 
 export const CommonTable = (props) => {
 
     const title = HeaderMap[props.type]?.title || '';
     const headers = HeaderMap[props.type]?.headers || [];
     const data = props.data || [];
-    const handleClickRow = props?.onClickRow || null;
+
+    const handleClickRow = (d) => {
+        if (props.onClickRow) {
+            props.onClickRow(d);
+        }
+    };
 
     return (
         <TableContainer>
@@ -72,11 +107,10 @@ export const CommonTable = (props) => {
                     </Tr>
                 </Thead>
                 <Tbody>
-
                     {
                         data.map((d, i) => {
                             return (
-                                <Tr key={i} onClick={handleClickRow ? (e) => handleClickRow(d) : () => {}}>
+                                <Tr key={i} onClick={handleClickRow ? () => handleClickRow(d) : () => {}}>
                                     {
                                         headers.map((h, i) => <Td key={'body_'+i}> {d[h.key]} </Td>)
                                     }
